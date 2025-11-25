@@ -8,30 +8,6 @@ Il contient :
 - Chargement des données brutes et intégration du nettoyage du Membre 2.
 - Analyse descriptive (dimensions, types, valeurs manquantes, incohérences).
 - Visualisations principales : évolution des ventes, distributions prix/quantités, analyse par pays.
-  
-# Cohort Analysis
-### Cette étape du projet consiste à construire les cohortes d’acquisition, mesurer la rétention client dans le temps et analyser la dynamique de chiffre d’affaires par âge de cohorte. Le but est de comprendre le comportement post-acquisition des clients et de fournir les matrices nécessaires au calcul de la CLV empirique et à l’application Streamlit.
-Le notebook utilisé est : 03_cohort_analysis.ipynb.
-Il contient :
--Préparation temporelle des données : création de InvoiceMonth, AcqMonth (mois d’acquisition) et CohortAge (M+0, M+1, ...).
--	Construction des matrices de cohortes :
--cohort_counts : nombre de clients actifs par cohorte et par âge,
--cohort_revenue : chiffre d’affaires généré par cohorte et par âge.
--Calcul des taux de rétention : ratio entre le nombre de clients actifs à M+t et l’effectif initial de la cohorte (M+0).
--Visualisations principales :
--heatmap de rétention par cohorte,
--heatmap du revenu par âge de cohorte,
--densité du chiffre d’affaires moyen selon l’âge.
--Résultats clés observés :
--forte baisse de rétention entre M+0 et M+1,
--stabilisation d’un noyau fidèle à partir de M+3,
-o	concentration de la valeur client principalement sur les trois premiers mois,
-o	cohortes anciennes (2009–2010) plus volumineuses et plus rentables.
-•	Exports produits :
-o	cohort_counts.csv,
-o	cohort_revenue.csv,
-o	graphiques pour la présentation Streamlit dans docs.
-
 
 # rfm clv formulee
 
@@ -54,5 +30,56 @@ Cette étape consiste à construire la table RFM complète, segmenter les client
   avec un taux d’actualisation d = 1%.
   Résultats produits : CLV globale et CLV par segment RFM.
 - **Export final** : fichier `clean_data/customers_rfm.xlsx` contenant RFM, scores, segments, ARPU et CLV pour exploitation dans l’application Streamlit.
+
+
+# Customer Lifetime Value (CLV) Analysis – Empirical CLV
+
+### Purpose
+This part of the project calculates **customer-level** and **cohort-level Customer Lifetime Value (CLV)** from transaction data.
+It also generates visualizations to understand customer value trends and distribution over time.
+
+### Notebook
+`notebooks/clv_empirical.ipynb`
+
+### Tasks
+* **Data Preparation**
+  * Clean transactions and calculate transaction amount:
+    Amount = Quantity × UnitPrice
+
+* **Customer-level CLV**
+  * Aggregate total spending per customer
+  * Export results as `clv_customer.csv`
+
+* **Cohort-level CLV**
+  * Determine first purchase month (`AcqMonth`) per customer
+  * Calculate cohort age (`CohortAge`) in months
+  * Compute average CLV per cohort
+  * Export results as `clv_cohort.csv`
+
+* **Visualizations**
+  * Cohort CLV heatmap (`clv_cohort_heatmap.png`)
+  * Cumulative revenue per cohort (`clv_cumulative_trend.png`)
+  * Customer-level CLV distributions (linear and log scale)
+  * Count of zero CLV customers
+
+### Outputs
+All outputs are saved in `output_clv/`:
+* `clv_customer.csv` – customer-level CLV
+* `clv_cohort.csv` – cohort-level CLV
+* PNG visualizations:
+  * `clv_cohort_heatmap.png`
+  * `clv_cumulative_trend.png`
+  * `clv_customer_distribution_linear.png`
+  * `clv_customer_distribution_log.png`
+
+### Usage
+1. Install dependencies:
+pip install pandas numpy matplotlib seaborn pyarrow
+2. Place cleaned transaction file in `clean_data/`:
+clean_data/transactions_customers.parquet
+3. Open and run the notebook:
+jupyter notebook notebooks/clv_empirical.ipynb
+4. Check the `output_clv/` folder for CSV files and charts.
+
 
 
